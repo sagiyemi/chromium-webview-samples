@@ -62,6 +62,10 @@ public class MainFragment extends Fragment {
                 new NotificationBindObject(getActivity().getApplicationContext()),
                 "NotificationBind");
 
+        mWebView.addJavascriptInterface(
+                new GetImageObject(getActivity().getApplicationContext()),
+                "GetImageBind");
+
         setUpWebViewDefaults(mWebView);
 
         // Check whether we're recreating a previously destroyed instance
@@ -93,6 +97,8 @@ public class MainFragment extends Fragment {
 
         // Enable Javascript
         settings.setJavaScriptEnabled(true);
+
+        settings.setDomStorageEnabled(true);
 
         // Use WideViewport and Zoom out if there is no viewport defined
         settings.setUseWideViewPort(true);

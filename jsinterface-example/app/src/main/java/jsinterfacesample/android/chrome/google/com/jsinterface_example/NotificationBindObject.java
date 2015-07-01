@@ -21,10 +21,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 public class NotificationBindObject {
 
+    private static final String TAG = "NotificationBindObject";
     private Context mContext;
 
     public NotificationBindObject(Context context) {
@@ -43,6 +45,7 @@ public class NotificationBindObject {
      */
     @JavascriptInterface
     public void showNotification(String message) {
+        Log.wtf(TAG, "showNotification");
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(mContext)
                         .setSmallIcon(R.drawable.notification_icon)

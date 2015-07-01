@@ -185,5 +185,38 @@ window.onload = function() {
         changeState(NOTIFICATION_SHOWN, true);
     });
 
+    var trollBtn = document.querySelector('#troll-btn');
+    trollBtn.addEventListener('click', function() {
+        if(window.GetImageBind) {
+
+            var link = "http://galerie.alittlemarket.com/galerie/sell/136512/decorations-murales-sticker-troll-facebook-lol-3414037-capture-de-cran5.16-dd429_big.jpg";
+            var name = "troll.jpg";
+
+            console.log('troll clicked');
+
+            var oReq = new XMLHttpRequest();
+            oReq.open("GET", link, true);
+            oReq.responseType = "arraybuffer";
+
+            oReq.onload = function(oEvent) {
+                var blob = new Blob([oReq.response], {type: "image/png"});
+
+                 var reader = new window.FileReader();
+                 reader.readAsDataURL(blob);
+                 reader.onloadend = function() {
+                        base64data = reader.result;
+                        console.log(base64data );
+
+                        GetImageBind.sendImage(base64data);
+
+                  }
+
+            };
+
+            oReq.send();
+
+        }
+    })
+
     updateUI(true);
 };
