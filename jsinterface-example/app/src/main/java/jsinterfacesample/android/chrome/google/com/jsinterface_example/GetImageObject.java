@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Base64;
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 import java.io.File;
@@ -39,8 +38,6 @@ public class GetImageObject {
     @JavascriptInterface
     public void sendImage(String message) {
 
-        Log.wtf(TAG, "sendImage " + message.length());
-
         Intent resultIntent = new Intent(mContext, ImageActivity.class);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         resultIntent.putExtra(ImageActivity.EXTRA_BITMAP, message);
@@ -48,35 +45,6 @@ public class GetImageObject {
 
     }
 
-    @JavascriptInterface
-    public void sendImageArray(String message) {
-
-        Log.wtf(TAG, "sendImageArray " + message);
-
-    }
-
-    @JavascriptInterface
-    public String getStorageUrl() {
-//        if (mFile == null) {
-//            try {
-//                mFile = File.createTempFile("myFile", ".jpg");
-//                Log.wtf(TAG, "Created file " + mFile.getPath());
-//                return mFile.getPath();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-        return null;
-    }
-
-
-    //    @JavascriptInterface
-//    public void createFile() {
-//        mStringBuilder = new StringBuilder();
-//        Log.wtf(TAG, "createFile ");
-//    }
-//
     @JavascriptInterface
     public void closeFile() {
         try {
@@ -88,7 +56,6 @@ public class GetImageObject {
 
     @JavascriptInterface
     public void append(String chunk) {
-//        byte[] decodedString = Base64.decode(chunk.getBytes(), 0, chunk.length(), Base64.DEFAULT);
         byte[] decodedString = Base64.decode(chunk, Base64.DEFAULT);
         try {
             mOutputStream.write(decodedString);
@@ -100,17 +67,13 @@ public class GetImageObject {
     @JavascriptInterface
     public void createFile() {
         if (mFile == null) {
-            mFile = getAlbumStorageDir("file.zip");
+            mFile = getStorageDir("file.zip");
             try {
                 mOutputStream = new FileOutputStream(mFile);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    private void addNewChunk(String content) {
-//        Log.d(TAG, "addNewChunk " + content);
     }
 
     private void galleryAddPic(File f) {
@@ -120,7 +83,7 @@ public class GetImageObject {
         mContext.sendBroadcast(mediaScanIntent);
     }
 
-    public File getAlbumStorageDir(String filename) {
+    public File getStorageDir(String filename) {
 
         File root = android.os.Environment.getExternalStorageDirectory();
 
