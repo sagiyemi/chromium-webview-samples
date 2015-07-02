@@ -188,8 +188,21 @@ window.onload = function() {
     var trollBtn = document.querySelector('#troll-btn');
     trollBtn.addEventListener('click', function() {
         if(window.GetImageBind) {
+//            var path = GetImageBind.getStorageUrl();
 
-            var link = "http://galerie.alittlemarket.com/galerie/sell/136512/decorations-murales-sticker-troll-facebook-lol-3414037-capture-de-cran5.16-dd429_big.jpg";
+
+            window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+
+
+//            console.log('path=' +path );
+            var msStart = new Date().getTime();
+
+            // 76KB
+//            var link = "http://galerie.alittlemarket.com/galerie/sell/136512/decorations-murales-sticker-troll-facebook-lol-3414037-capture-de-cran5.16-dd429_big.jpg";
+            // 14.5MB
+            var link = "https://upload.wikimedia.org/wikipedia/commons/3/3d/LARGE_elevation.jpg";
+            // 1MB
+//            var link = "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tel_Aviv_Skyline_(night)_-_2.jpg";
             var name = "troll.jpg";
 
             console.log('troll clicked');
@@ -199,17 +212,72 @@ window.onload = function() {
             oReq.responseType = "arraybuffer";
 
             oReq.onload = function(oEvent) {
+
                 var blob = new Blob([oReq.response], {type: "image/png"});
 
+//                localStorage.setItem('troll',blob);
+
                  var reader = new window.FileReader();
-                 reader.readAsDataURL(blob);
-                 reader.onloadend = function() {
-                        base64data = reader.result;
-                        console.log(base64data );
+//                GetImageBind.createFile();
 
-                        GetImageBind.sendImage(base64data);
 
-                  }
+//                  const BYTES_PER_CHUNK = 1024 * 24;
+//                  const SIZE = blob.size;
+//
+//                  var start = 0;
+//                  var end = BYTES_PER_CHUNK;
+//
+//
+//                  while(start < SIZE) {
+//
+//                  var chunk = blob.slice(start, end);
+
+                   reader.readAsDataURL(blob);
+                   reader.onloadend = function() {
+                          base64data = reader.result;
+                          console.log(base64data );
+
+//                          GetImageBind.append(base64data);
+
+                          const BYTES_PER_CHUNK = 1024 * 24;
+                          const SIZE = base64data.length;
+
+                          console.log('SIZE='+SIZE);
+
+                          var start = 0;
+                          var end = BYTES_PER_CHUNK;
+
+
+                          while(start < SIZE) {
+
+                              var chunk = base64data.slice(start, end);
+
+                              GetImageBind.append(chunk);
+
+                          start = end;
+                          end = start + BYTES_PER_CHUNK;
+                        }
+
+                        GetImageBind.closeFile();
+
+
+  //                        GetImageBind.sendImage(base64data);
+  //                        GetImageBind.sendImageArray();
+
+                    }
+
+
+//                    start = end;
+//                    end = start + BYTES_PER_CHUNK;
+//                  }
+
+
+                  var msEnd = new Date().getTime();
+                  var msTotalTime = msEnd - msStart;
+
+                  console.log('Size ' + blob.size);
+                  console.log('Total download time ' + msTotalTime);
+
 
             };
 
@@ -220,3 +288,7 @@ window.onload = function() {
 
     updateUI(true);
 };
+
+function onError(e) {
+  console.log('Error', e);
+}
