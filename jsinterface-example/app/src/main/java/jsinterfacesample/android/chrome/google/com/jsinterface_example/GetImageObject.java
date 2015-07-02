@@ -3,7 +3,6 @@ package jsinterfacesample.android.chrome.google.com.jsinterface_example;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
@@ -21,8 +20,7 @@ public class GetImageObject {
     private static final String TAG = "GetImageObject";
     private Context mContext;
     private File mFile;
-    private StringBuilder mStringBuilder;
-    private String mFinalString;
+    private FileOutputStream mOutputStream;
 
     public GetImageObject(Context context) {
         mContext = context;
@@ -73,7 +71,7 @@ public class GetImageObject {
     }
 
 
-//    @JavascriptInterface
+    //    @JavascriptInterface
 //    public void createFile() {
 //        mStringBuilder = new StringBuilder();
 //        Log.wtf(TAG, "createFile ");
@@ -81,40 +79,38 @@ public class GetImageObject {
 //
     @JavascriptInterface
     public void closeFile() {
-        mFinalString = mStringBuilder.toString();
-        Log.wtf(TAG, "closeFile " + mStringBuilder.length());
-        File file = getAlbumStorageDir("myImage.jpg");
-        FileOutputStream outputStream = null;
-
         try {
-
-            outputStream = new FileOutputStream(file);
-            byte[] decodedString = Base64.decode(mFinalString, Base64.DEFAULT);
-            outputStream.write(decodedString);
-            outputStream.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            mOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        Log.wtf(TAG, "closeFile " + mFinalString);
     }
 
     @JavascriptInterface
     public void append(String chunk) {
-
-        if (mStringBuilder == null) {
-            mStringBuilder = new StringBuilder();
-            String base64 = "base64,";
-            String content = chunk.substring(chunk.indexOf(base64) + base64.length());
-            mStringBuilder.append(content);
-        } else {
-            mStringBuilder.append(chunk);
+//        byte[] decodedString = Base64.decode(chunk.getBytes(), 0, chunk.length(), Base64.DEFAULT);
+        byte[] decodedString = Base64.decode(chunk, Base64.DEFAULT);
+        try {
+            mOutputStream.write(decodedString);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
-        Log.wtf(TAG, "append " + mStringBuilder.length());
+    @JavascriptInterface
+    public void createFile() {
+        if (mFile == null) {
+            mFile = getAlbumStorageDir("file.zip");
+            try {
+                mOutputStream = new FileOutputStream(mFile);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void addNewChunk(String content) {
+//        Log.d(TAG, "addNewChunk " + content);
     }
 
     private void galleryAddPic(File f) {
@@ -128,7 +124,7 @@ public class GetImageObject {
 
         File root = android.os.Environment.getExternalStorageDirectory();
 
-        File dir = new File (root.getAbsolutePath() + "/download");
+        File dir = new File(root.getAbsolutePath() + "/download");
         dir.mkdirs();
         File file = new File(dir, filename);
 

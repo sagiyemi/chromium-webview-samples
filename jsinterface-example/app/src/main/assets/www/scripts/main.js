@@ -195,12 +195,15 @@ window.onload = function() {
 
 
 //            console.log('path=' +path );
-            var msStart = new Date().getTime();
 
             // 76KB
 //            var link = "http://galerie.alittlemarket.com/galerie/sell/136512/decorations-murales-sticker-troll-facebook-lol-3414037-capture-de-cran5.16-dd429_big.jpg";
             // 14.5MB
-            var link = "https://upload.wikimedia.org/wikipedia/commons/3/3d/LARGE_elevation.jpg";
+//            var link = "https://upload.wikimedia.org/wikipedia/commons/3/3d/LARGE_elevation.jpg";
+            var link = "http://download.thinkbroadband.com/1MB.zip";
+            var link = "http://download.thinkbroadband.com/64KB.zip";
+            var link = "http://download.thinkbroadband.com/40MB.zip";
+            var link = "http://download.thinkbroadband.com/30MB.zip";
             // 1MB
 //            var link = "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tel_Aviv_Skyline_(night)_-_2.jpg";
             var name = "troll.jpg";
@@ -208,49 +211,42 @@ window.onload = function() {
             console.log('troll clicked');
 
             var oReq = new XMLHttpRequest();
+
             oReq.open("GET", link, true);
+
             oReq.responseType = "arraybuffer";
 
             oReq.onload = function(oEvent) {
 
+                var msStart = new Date().getTime();
+
                 var blob = new Blob([oReq.response], {type: "image/png"});
 
-//                localStorage.setItem('troll',blob);
-
                  var reader = new window.FileReader();
-//                GetImageBind.createFile();
-
-
-//                  const BYTES_PER_CHUNK = 1024 * 24;
-//                  const SIZE = blob.size;
-//
-//                  var start = 0;
-//                  var end = BYTES_PER_CHUNK;
-//
-//
-//                  while(start < SIZE) {
-//
-//                  var chunk = blob.slice(start, end);
 
                    reader.readAsDataURL(blob);
                    reader.onloadend = function() {
                           base64data = reader.result;
-                          console.log(base64data );
 
-//                          GetImageBind.append(base64data);
+                            var msEncoding = new Date().getTime() ;
+                            var encodingTime = msEncoding - msStart;
+                              console.log('Encoding ' + encodingTime);
 
-                          const BYTES_PER_CHUNK = 1024 * 24;
+                            GetImageBind.createFile();
+
+                          const BASE64 = 'base64,' ;
+                          const BYTES_PER_CHUNK = 1024 * 512 ;
                           const SIZE = base64data.length;
 
-                          console.log('SIZE='+SIZE);
 
-                          var start = 0;
-                          var end = BYTES_PER_CHUNK;
+                          var start = base64data.indexOf(BASE64) +BASE64.length;
+                          var end = start + BYTES_PER_CHUNK;
 
 
                           while(start < SIZE) {
 
-                              var chunk = base64data.slice(start, end);
+                              var to = end;
+                              var chunk = base64data.slice(start, to);
 
                               GetImageBind.append(chunk);
 
@@ -261,22 +257,13 @@ window.onload = function() {
                         GetImageBind.closeFile();
 
 
-  //                        GetImageBind.sendImage(base64data);
-  //                        GetImageBind.sendImageArray();
+                          var msEnd = new Date().getTime();
+                          var sendingDecodingTime = msEnd - msEncoding;
+
+                          console.log('Size ' + blob.size);
+                          console.log('send time ' + sendingDecodingTime);
 
                     }
-
-
-//                    start = end;
-//                    end = start + BYTES_PER_CHUNK;
-//                  }
-
-
-                  var msEnd = new Date().getTime();
-                  var msTotalTime = msEnd - msStart;
-
-                  console.log('Size ' + blob.size);
-                  console.log('Total download time ' + msTotalTime);
 
 
             };
